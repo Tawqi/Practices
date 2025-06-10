@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Page</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 40px;
+    }
+
+    .product-card {
+      background: #fff;
+      max-width: 400px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .product-content {
+      padding: 20px;
+    }
+
+    .product-title {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .product-details {
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .product-badges {
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eee;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-right: 5px;
+      font-size: 12px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="product-card">
+    <img class="product-image" id="p_img" alt="Product Image">
+
+    <div class="product-content">
+      <div class="product-title" id="p_title"></div>
+      <div class="product-details">This are the deatails of the product</div>
+      <div class="product-badges" id="p_badges"></div>
+    </div>
+  </div>
+<script>
+  let p_img = document.getElementById('p_img')
+  let p_title = document.getElementById('p_title')
+  let p_badges = document.getElementById('p_badges')
+
+  // Get product name from the URL
+  const urlParts = window.location.pathname.split('/');
+  const productName = urlParts[urlParts.length - 1]; // Last part of the URL
+
+  fetch(`/product/${productName}`)
+  .then(Response => Response.json())
+  .then(product => {
+      p_img.src = product.image
+      p_title.innerText = product.name
+
+      // Clear old badges if any
+      p_badges.innerHTML = '';
+
+      if (product.colors.length === 0) {
+        p_badges.innerHTML = '<div class="badge">No colors available</div>';
+      } else {
+        product.colors.forEach(color => {
+          let p_badge = document.createElement('div')
+          p_badge.className = 'badge'
+          p_badge.innerText = color
+          p_badges.appendChild(p_badge)
+        });
+      }
+      
+     })
+     // If product is not found
+     .catch(err => {
+        p_title.innerText = 'Product not found';
+        p_img.style.display = 'none';
+        p_badges.innerHTML = '';
+        console.log(err.message);
+      });
+
+</script>
+</body>
+</html>
+

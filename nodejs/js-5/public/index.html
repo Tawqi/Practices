@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS-3</title>
+</head>
+<body>
+    <h1>This is the HTML</h1>
+    <ul id="stuff"></ul>
+
+    <script>        
+         fetch('/userdata') // Send a GET request to the server
+         .then(response => response.json()) // Converts the recived data to json
+         
+         .then(data => { // Here data is the value from the response.json
+            const stuff = document.getElementById('stuff')
+
+            data.forEach(user => { // Here data is a parameter, users is the name of items in the database collection 
+
+                const li = document.createElement('li')
+                const name = document.createElement('h1')
+                const pass = document.createElement('p')
+                const img = document.createElement('img')
+
+                name.innerText = user.name
+                pass.innerText = user.password
+                img.src = user.img
+
+                stuff.appendChild(li)
+                li.appendChild(name)
+                li.appendChild(pass)
+                li.appendChild(img)
+            })
+         })
+         .catch(err => console.log(err))
+    </script>
+</body>
+</html>

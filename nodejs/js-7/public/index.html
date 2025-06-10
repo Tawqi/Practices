@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .search-container {
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      width: 300px;
+    }
+
+    .search-container input {
+      border: none;
+      outline: none;
+      font-size: 16px;
+      width: 100%;
+      padding: 8px;
+    }
+
+    .search-container button {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .search-container button:hover {
+      background: #45a049;
+    }
+
+    #results {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    #results li {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="search-form" class="search-container">
+    <input type="text" id="search-input" placeholder="Search product..." required />
+    <button type="submit">Search</button>
+  </form>
+  <ul id="results"></ul> 
+  <script>
+    const form = document.getElementById('search-form');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('results');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault(); // Prevent page reload
+
+      const query = input.value;
+
+      // ✅ Match the backend param: ?search=
+      fetch(`/search?search=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+
+        .then(data => {
+          results.innerHTML = ''; // Clear old results
+
+          if (data.length === 0) {
+            results.innerHTML = '<li>No product found</li>';
+            return;
+          }
+
+          data.forEach(product => {
+            const product_name = product.name;
+            const product_url = `/productpage/${product_name}`;
+
+            const li = document.createElement('li');
+            const a = document.createElement('a')
+
+            a.href = product_url
+            a.textContent = product_name;
+
+            li.appendChild(a);  
+            results.appendChild(li);
+          });
+        })
+
+        .catch(err => {
+          console.log(err);
+          results.innerHTML = '<li>Error fetching products</li>';
+        });
+    });
+  </script>
+</body>
+</html>
