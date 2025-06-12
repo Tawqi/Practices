@@ -7,7 +7,7 @@ app.use(express.static('public'))
 
 app.use(express.urlencoded({ extended: true }));
 
-const dbURL = 'mongodb+srv://Tawqi:pass0@cluster0.weqclte.mongodb.net/js-4?retryWrites=true&w=majority&appName=Cluster0'
+const dbURL = 'mongodb+srv://name:password@cluster0.weqclte.mongodb.net/js-4?retryWrites=true&w=majority&appName=Cluster0'
 
 mongoose.connect(dbURL)
 .then(()=> app.listen(3000, ()=> console.log('Its Listening')))
