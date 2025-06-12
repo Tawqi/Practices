@@ -6,7 +6,7 @@ const User = require('./models/users')
 
 app.use(express.static('public'))
 
-const userdataURL = 'mongodb+srv://Tawqi:pass0@cluster0.weqclte.mongodb.net/js-4?retryWrites=true&w=majority&appName=Cluster0'
+const userdataURL = 'mongodb+srv://name:password@cluster0.weqclte.mongodb.net/js-4?retryWrites=true&w=majority&appName=Cluster0'
 
 mongoose.connect(userdataURL)
     .then(()=>app.listen(3000,()=> console.log('Its running')))
