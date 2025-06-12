@@ -10,7 +10,7 @@ server.use(express.static('public'));
 
 
 // Link for the database as a variable
-const userdataURL = 'mongodb+srv://Tawqi:pass0@cluster0.weqclte.mongodb.net/js-4?retryWrites=true&w=majority&appName=Cluster0'
+const userdataURL = 'mongodb+srv://name:password@cluster0.weqclte.mongodb.net/js-4?retryWrites=true&w=majority&appName=Cluster0'
 
 // Connects to Database 
 mongoose.connect(userdataURL)
