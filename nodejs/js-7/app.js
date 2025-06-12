@@ -4,6 +4,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const Products = require('./models/products')
 app.use(express.static('public'))
+
 app.use(express.urlencoded({ extended: true }));
 
 const dbURL = 'mongodb+srv://Tawqi:pass0@cluster0.weqclte.mongodb.net/js-4?retryWrites=true&w=majority&appName=Cluster0'
@@ -55,7 +56,7 @@ app.get('/product/:name', (req,res) => {
 // new RegExp(`^${urlname}$`) Looks for exact matching words,
 // 'i' makes it no care about if its uppercasre or lowercase letters
 
-    Products.findOne({ name: new RegExp(`^${urlname}$`, 'i') }) 
+    Products.findOne({ name: new RegExp(`^${urlname}$`, 'i')})
     .then(data => {
 
       if (!data) { // If product not found 

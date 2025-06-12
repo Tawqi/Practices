@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searchpage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <nav class="flex p-5 justify-between items-center bg-blue-600 text-white relative">
+  <a href="/" class="text-2xl font-bold">Shop</a>
+
+  <!-- Search + Button -->
+  <form id="searchForm" class="flex items-center space-x-2 relative">
+    <input
+      id="search"
+      type="text"
+      placeholder="Search what you are looking for"
+      class="rounded-xl p-2 border border-white text-black w-60"
+    />
+    <button
+      type="submit"
+      class="bg-white text-blue-600 px-4 py-2 rounded-xl font-semibold hover:bg-blue-100"
+    >
+      Search
+    </button>
+
+    <!-- Suggestions -->
+    <ul
+      id="suggestions"
+      class="absolute top-full left-0 mt-1 bg-white text-black border border-gray-300 rounded w-full z-10 hidden"
+    ></ul>
+  </form>
+
+  <button id="cart">
+    <i class="fas fa-cart-shopping text-xl"></i>
+  </button>
+</nav>
+
+  <!-- Search Results Heading -->
+  <div class="text-center mt-6">
+    <h1 class="text-2xl font-semibold">Search Results</h1>
+  </div>
+
+  <!-- Product Cards Container -->
+  <div id="results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+    <!-- Product cards will be inserted here dynamically -->
+  </div>
+  <script>
+    const container = document.getElementById('results')
+    const productName = decodeURIComponent(window.location.pathname.split('/').pop());
+
+    fetch(`/serchedproducts/${productName}`)
+    .then(res => {
+        if (!res.ok) throw new Error('Not found'); // res.ok means the responce was ok
+        return res.json();
+    })
+    .then(data => {
+        if (data.length === 0) {
+          document.getElementById('no-results').classList.remove('hidden');
+          return;
+        }
+        data.forEach(product => {
+          const card = document.createElement('div');
+          card.className = "bg-white p-4 rounded-lg shadow hover:shadow-md transition";
+        
+          card.innerHTML = `
+          <a href="/productpage/${product.name}">
+            <img src="${product.image || 'https://via.placeholder.com/150'}" alt="${product.name}" class="w-full h-40 object-cover rounded mb-3">
+            <h3 class="text-lg font-semibold">${product.name}</h3>
+            <p class="text-gray-600">$${product.price || 'N/A'}</p>
+            </a>
+          `;
+          container.appendChild(card);
+        });
+    })
+
+    const cart = document.getElementById('cart');
+const search = document.getElementById('search');
+const suggestions = document.getElementById('suggestions');
+const form = document.getElementById('searchForm');
+
+// Submit search on form submit (Enter or Search button)
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = search.value.trim(); // Removes spaces before and after the values
+  if (input) {
+    window.location.href = `/searchpage/${encodeURIComponent(input)}`;
+    
+  }
+});
+
+// Show search suggestions as user types
+search.addEventListener('input', () => {
+  const Sinput = search.value.trim();
+
+  if (!Sinput) {
+    suggestions.classList.add('hidden');
+    suggestions.innerHTML = '';
+    return;
+  }
+
+  fetch(`/search?search=${encodeURIComponent(Sinput)}`)
+    .then(res => res.json())
+    .then(data => {
+      suggestions.innerHTML = '';
+
+      if (data.length > 0) {
+        suggestions.classList.remove('hidden');
+
+        data.forEach(product => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+
+          a.innerText = product.name;
+          a.href = `/productpage/${encodeURIComponent(product.name)}`;
+          a.classList.add('block', 'p-2', 'hover:bg-gray-200'); // Example styling
+
+          li.appendChild(a);
+          suggestions.appendChild(li);
+        });
+      } else {
+        suggestions.classList.add('hidden');
+      }
+    })
+    .catch(err => {
+      console.error('Search error:', err);
+      suggestions.classList.add('hidden');
+    });
+});
+
+
+    
+  </script>
+</body>
+</html>

@@ -73,8 +73,8 @@
 
       const query = input.value;
 
-      // ✅ Match the backend param: ?search=
-      fetch(`/search?search=${encodeURIComponent(query)}`)
+      // Match the backend param: ?search= 
+      fetch(`/search?search=${encodeURIComponent(query)}`) // encodeURIComponent Converts special characters (like spaces) into safe URL format
         .then(res => res.json())
 
         .then(data => {
@@ -105,6 +105,8 @@
           results.innerHTML = '<li>Error fetching products</li>';
         });
     });
+
+    
   </script>
 </body>
 </html>
