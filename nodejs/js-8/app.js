@@ -17,11 +17,11 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
   res.redirect("/");
 });
-
+// Makes a string safe for use in a regular expression.
 function escapeRegex(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
-
+// Search Suggestion 
 app.get("/search", (req, res) => {
   const q = req.query.search;
 
