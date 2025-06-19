@@ -18,7 +18,7 @@ mongoose.connect(dbURL)
 app.get('/', (req,res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
-// Recives the input datas from the frontend via pose req and saves to database  
+// Recives the input datas from the frontend via post req and saves to database
 app.post('/submit',(req,res)=> { 
     const newproduct = new Product({
         name: req.body.name, // Gets the input data from the req body via the name of the input 

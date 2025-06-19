@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singup</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded shadow flex flex-col gap-5 rounded-xl">
+    <h1 class="text-xl font-bold">Singup</h1>
+    <p>Fill up the form to singup</p>
+    <form action="/signingup" method="post" class="flex flex-col gap-5 w-80">
+        <input type="text" class="border border-1 border-gray-400 rounded-xl p-3" placeholder="Name" name="name">
+        <input type="text" class="border border-1 border-gray-400 rounded-xl p-3" placeholder="Email" name="email">
+        <input type="text" class="border border-1 border-gray-400 rounded-xl p-3" placeholder="Password" name="password">
+        <input type="text" class="border border-1 border-gray-400 rounded-xl p-3" placeholder="Confirom password" name="confiromPass">
+        <div class="flex gap-5">
+        <label class="switch hover:cursor-pointer">
+          <input type="radio" name="male" value="option1">
+          <span class="slider">Male</span>
+        </label>
+        <label class="switch hover:cursor-pointer">
+          <input type="radio" name="female" value="option2">
+          <span class="slider">Female</span>
+        </label>
+        </div>
+
+        <button class=" text-white bg-green-600 p-3 rounded-xl hover:bg-green-700 hover:cursor-pointer" type="submit">Singup</button>
+    </form>
+    </div>
+
+</body>
+</html>

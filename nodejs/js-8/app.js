@@ -16,12 +16,34 @@ app.get("/", (req, res) => {
 });
 app.get("/home", (req, res) => {
   res.redirect("/");
-});
+}); 
+
 // Makes a string safe for use in a regular expression.
 function escapeRegex(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
-// Search Suggestion 
+// Single product page
+app.get('/productpage/:name', (req,res) => {
+    res.sendFile(path.join(__dirname, 'public', 'results.html'))
+})
+// Data single product page
+app.get('/product/:name', (req, res) => {
+  const URLname = req.params.name;
+
+  Products.findOne({ name: new RegExp(`^${URLname}$`, 'i') })
+    .then(data => {
+      if (!data) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+      res.json(data);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'Error finding the product' });
+    });
+});
+
+// Search Suggestion results
 app.get("/search", (req, res) => {
   const q = req.query.search;
 
@@ -40,35 +62,11 @@ app.get("/search", (req, res) => {
       res.status(500).json({ error: "Something went wrong" });
     });
 });
-
-
-
-app.get('/productpage/:name', (req,res) => {
-    res.sendFile(path.join(__dirname, 'public', 'results.html'))
-})
-
-
-
-app.get('/product/:name', (req, res) => {
-  const URLname = req.params.name;
-
-  Products.findOne({ name: new RegExp(`^${URLname}$`, 'i') })
-    .then(data => {
-      if (!data) {
-        return res.status(404).json({ error: 'Product not found' });
-      }
-      res.json(data);
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ error: 'Error finding the product' });
-    });
-});
-
+// Search results page
 app.get('/searchpage/:name', (req,res) => {
     res.sendFile(path.join(__dirname, 'public', 'searchpage.html'))
 })
-
+// Data for search result page
 app.get('/serchedproducts/:name', (req, res) => {
   const URLname = req.params.name;
 

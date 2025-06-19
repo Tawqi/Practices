@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", "Roboto", sans-serif;
+      font-weight: bold;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      background-color: black;
+      padding: 1rem;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+
+    .head {
+      display: flex;
+      justify-content: space-evenly;
+      border-bottom: 2px solid black;
+    }
+
+    .head h2 {
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+      border-right: 1px solid black;
+    }
+
+    .head h2:last-child { border-right: none; }
+
+    ul { list-style: none; }
+
+    li {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      border-bottom: 1px solid black;
+      padding: 0.5rem 0;
+    }
+
+    .productDetail {
+      flex: 1;
+      text-align: center;
+      border-right: 1px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 5vw;
+    }
+
+    .productDetail img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .productDetail:last-child { border-right: none; }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .buttons button {
+      padding: 0.3rem 0.5rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .buttons button:first-child {
+      background-color: red;
+      color: white;
+    }
+    .buttons button:last-child {
+      background-color: blue;
+      color: white;
+    }
+
+    .addbtn {
+      padding: .8rem;
+      border: none;
+      border-radius: 14px;
+      font-size: large;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modalContent {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal form input,
+    .modal form textarea {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    form button { padding: .8rem; }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: green;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      font-size: 16px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .modal-btn {
+      padding: 10px 16px;
+      font-size: 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.2s;
+    }
+
+    .submit-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .submit-btn:hover { background-color: #45a049; }
+
+    .close-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .close-btn:hover { background-color: #d73833; }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>Product Dashboard</h1>
+    <button class="addbtn" id="openModal">Add product</button>
+  </nav>
+
+  <div id="addProductModal" class="modal">
+    <div class="modalContent">
+      <h1>Add Product</h1>
+      <p>Enter the details of the new product</p>
+      <form action="/submit" method="post">
+        <input type="text" name="name" placeholder="Product Name">
+        <input type="text" name="image" placeholder="Image URL">
+        <input type="text" name="category" placeholder="Category">
+        <input type="text" name="price" placeholder="Price">
+        <input type="text" name="sizes" placeholder="Sizes">
+        <input type="text" name="colors" placeholder="Colors">
+        <textarea name="description" placeholder="Description"></textarea>
+        <div class="checkbox-group">
+          <input type="checkbox" name="stocks" value="true" id="stocks">
+          <label for="stocks">In stock</label>
+        </div>
+        <button type="submit" class="modal-btn submit-btn">Submit</button>
+      </form>
+      <button id="closeModal" class="modal-btn close-btn">Close</button>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <div class="head">
+      <h2>Image</h2>
+      <h2>Name</h2>
+      <h2>Category</h2>
+      <h2>In Stock</h2>
+      <h2>Price</h2>
+      <h2>Sizes</h2>
+      <h2>Colors</h2>
+      <h2>Description</h2>
+      <h2>Edit / Delete</h2>
+    </div>
+    <ul id="ul"></ul>
+  </div>
+
+  <script>
+  const modal = document.getElementById('addProductModal');
+  const openModal = document.getElementById('openModal');
+  const closeModal = document.getElementById('closeModal');
+
+  openModal.onclick = () => modal.style.display = "flex";
+  closeModal.onclick = () => modal.style.display = "none";
+
+  window.onclick = (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  };
+
+  const ul = document.getElementById('ul');
+
+  // Function to create a product list item
+  function createProductLi(product) {
+    const li = document.createElement('li');
+
+    const imgDiv = document.createElement('div');
+    imgDiv.classList.add('productDetail');
+    const img = document.createElement('img');
+    img.src = product.image || 'https://via.placeholder.com/150';
+    img.alt = product.name;
+    imgDiv.appendChild(img);
+
+    const name = document.createElement('h2');
+    name.innerText = product.name;
+    name.classList.add('productDetail');
+
+    const category = document.createElement('h2');
+    category.innerText = product.category;
+    category.classList.add('productDetail');
+
+    const stocks = document.createElement('h2');
+    stocks.innerText = product.stocks ? '✔️ In Stock' : '❌ Out of Stock';
+    stocks.classList.add('productDetail');
+
+    const price = document.createElement('h2');
+    price.innerText = `$${product.price}`;
+    price.classList.add('productDetail');
+
+    const sizes = document.createElement('h2');
+    sizes.innerText = product.sizes.join(', ');
+    sizes.classList.add('productDetail');
+
+    const colors = document.createElement('h2');
+    colors.innerText = product.colors.join(', ');
+    colors.classList.add('productDetail');
+
+    const description = document.createElement('h2');
+    description.innerText = product.description;
+    description.classList.add('productDetail');
+
+    const buttonDiv = document.createElement('div');
+    buttonDiv.classList.add('productDetail', 'buttons');
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerText = '❌ Delete';
+    deleteBtn.addEventListener('click', () => {
+      fetch(`/productdelete/${encodeURIComponent(product.name)}`, { method: 'DELETE' })
+        .then(res => {
+          if (res.ok) {
+            alert(`${product.name} deleted successfully`);
+            li.remove();
+          } else {
+            alert('Delete failed');
+          }
+        });
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.innerText = '✏ Edit';
+    editBtn.addEventListener('click', () => {
+      const nameInput = document.createElement('input');
+      nameInput.value = product.name;
+      name.replaceWith(nameInput);
+
+      const categoryInput = document.createElement('input');
+      categoryInput.value = product.category;
+      category.replaceWith(categoryInput);
+
+      const priceInput = document.createElement('input');
+      priceInput.value = product.price;
+      price.replaceWith(priceInput);
+
+      const sizesInput = document.createElement('input');
+      sizesInput.value = product.magic;
+      sizes.replaceWith(sizesInput);
+
+      const colorsInput = document.createElement('input');
+      colorsInput.value = product.colors.join(', ');
+      colors.replaceWith(colorsInput);
+
+      const descriptionInput = document.createElement('input');
+      descriptionInput.value = product.description;
+      description.replaceWith(descriptionInput);
+
+      const stockInput = document.createElement('input');
+      stockInput.type = 'checkbox';
+      stockInput.checked = product.stocks;
+      stockInput.classList.add('productDetail');
+      stocks.replaceWith(stockInput);
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.innerText = 'Cancel';
+      cancelBtn.addEventListener('click', () => {
+        // Revert to original product display
+        li.replaceWith(createProductLi(product));
+      });
+
+      const applyBtn = document.createElement('button');
+      applyBtn.innerText = 'Apply';
+
+      applyBtn.addEventListener('click', () => {
+        console.log('btn pressed');
+        const updatedProduct = {
+          name: nameInput.value,
+          category: categoryInput.value,
+          price: Number(priceInput.value),
+          sizes: sizesInput.value,
+          colors: colorsInput.value,
+          description: descriptionInput.value,
+          stocks: stockInput.checked
+        };
+
+        if (!updatedProduct.name || !updatedProduct.price) {
+          alert("Name and price are required!");
+          return;
+        }
+
+        fetch(`/productedit/${encodeURIComponent(product.uid)}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedProduct)
+        })
+          .then(res => res.json())
+          .then(data => {
+            alert(data.message || "Update failed");
+            if (data.data) {
+              // Replace with updated product data
+              li.replaceWith(createProductLi(data.data));
+            }
+          })
+          .catch(err => {
+            console.error('Fetch error:', err);
+            alert("Error: Could not update product");
+          });
+      });
+
+      deleteBtn.replaceWith(cancelBtn);
+      editBtn.replaceWith(applyBtn);
+
+      buttonDiv.appendChild(cancelBtn);
+      buttonDiv.appendChild(applyBtn);
+    });
+
+    buttonDiv.appendChild(deleteBtn);
+    buttonDiv.appendChild(editBtn);
+
+    li.appendChild(imgDiv);
+    li.appendChild(name);
+    li.appendChild(category);
+    li.appendChild(stocks);
+    li.appendChild(price);
+    li.appendChild(sizes);
+    li.appendChild(colors);
+    li.appendChild(description);
+    li.appendChild(buttonDiv);
+
+    return li;
+  }
+
+  fetch('/dashboardapi')
+    .then(res => res.json())
+    .then(products => {
+      products.forEach(product => {
+        ul.appendChild(createProductLi(product));
+      });
+    })
+    .catch(err => console.log(err));
+</script>
+</body>
+</html>
